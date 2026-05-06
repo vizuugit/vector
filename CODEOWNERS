@@ -1,20 +1,24 @@
 # CODEOWNERS — Vector
 #
-# Everything is owned by the CTO until engineers join. As we hire, replace
-# `* @vizuugit` with team handles per directory. Keep this file the single
-# source of truth — do not duplicate ownership rules in PR templates.
+# CODEOWNERS lists GitHub identities that must review changes to a path.
+# Vector engineers (FiveMDev, ServerInfra) are Paperclip agents and do not
+# yet have GitHub identities, so today every path is owned by the CTO.
+#
+# When an engineer is provisioned a GitHub identity (or we create a GH team
+# for them), replace the placeholders below. Until then the structure stays
+# documented but inactive — do not add agent names that GitHub can't resolve.
 
 * @vizuugit
 
-# When the FiveM server engineer is hired, fan out:
-#   /server/      @vizuugit @<server-eng>
-#   /resources/   @<server-eng>
-#   /db/          @<server-eng>
-#
-# When the infra engineer is hired:
-#   /ops/         @<infra-eng>
-#   /server/server.cfg* @<infra-eng>
-#
-# Always keep CTO as a co-owner on /docs/adr/ — ADR sign-off does not
-# delegate.
+# Server scripting / gameplay code → FiveMDev (gameplay engineer).
+#   /resources/   @<fivem-dev-gh>
+#   /server/      @vizuugit @<fivem-dev-gh>
+#   /db/          @<fivem-dev-gh>
+
+# Infra, deploy, CI, anti-cheat → ServerInfra (infrastructure engineer).
+#   /ops/         @<server-infra-gh>
+#   /.github/     @<server-infra-gh>
+#   /server/server.cfg* @<server-infra-gh>
+
+# ADRs are CTO-signoff regardless of fan-out.
 /docs/adr/      @vizuugit
