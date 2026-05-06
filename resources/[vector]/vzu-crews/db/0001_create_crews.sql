@@ -1,4 +1,4 @@
--- vector-crews 0001 — crews row.
+-- vzu-crews 0001 — crews row.
 -- Spec: VEC-22 resource-spec §3.1 (with §10 Q1 anti-grief cooldown column).
 -- Forward-only: do not edit after merge.
 

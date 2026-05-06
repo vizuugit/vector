@@ -1,4 +1,4 @@
--- vector-crews 0003 — crew_cosmetic_unlocks.
+-- vzu-crews 0003 — crew_cosmetic_unlocks.
 -- Spec: VEC-22 resource-spec §3.3.
 -- Table ships in Phase 1 to keep migration ordering stable; unlock logic ships in Phase 2.
 -- Forward-only: do not edit after merge.

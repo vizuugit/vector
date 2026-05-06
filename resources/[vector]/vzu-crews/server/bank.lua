@@ -1,4 +1,4 @@
--- vector-crews/server/bank.lua
+-- vzu-crews/server/bank.lua
 -- Deposit / withdraw / payout / reputation pipeline.
 -- Spec: VEC-22 resource-spec §2.1, §2.3, §4.2, §5.2, §5.5, §10 Q1.
 --
@@ -11,13 +11,13 @@
 
 -- Globals are provided by shared/server scripts loaded earlier in fxmanifest order.
 -- Tests stub these via the fivem_shim helper.
-local Config = _G.VectorCrewsConfig
-local state = _G.VectorCrewsState
-local audit = _G.VectorCrewsAudit
-local redis = _G.VectorCrewsRedis
+local Config = _G.VzuCrewsConfig
+local state = _G.VzuCrewsState
+local audit = _G.VzuCrewsAudit
+local redis = _G.VzuCrewsRedis
 
-local M = _G.VectorCrewsBank or {}
-_G.VectorCrewsBank = M
+local M = _G.VzuCrewsBank or {}
+_G.VzuCrewsBank = M
 
 -- ---------------------------------------------------------------------------
 -- Internal helpers
@@ -68,11 +68,11 @@ local function emitFallback(reason, ctx)
     })
 end
 
--- §5.5: try the vector-heists export; fall back to convar; emit informational audit on fallback.
+-- §5.5: try the vzu-heists export; fall back to convar; emit informational audit on fallback.
 local function resolveMaxPayoutCents(ctx)
-    if ctx and ctx.heistKey and _G.exports and _G.exports["vector-heists"] then
+    if ctx and ctx.heistKey and _G.exports and _G.exports["vzu-heists"] then
         local ok, n = pcall(function()
-            return _G.exports["vector-heists"]:GetMaxPayoutCents(ctx.heistKey)
+            return _G.exports["vzu-heists"]:GetMaxPayoutCents(ctx.heistKey)
         end)
         if ok and type(n) == "number" and n > 0 then
             return n, false
@@ -83,9 +83,9 @@ local function resolveMaxPayoutCents(ctx)
 end
 
 local function resolveMaxRepPoints(ctx)
-    if ctx and ctx.heistKey and _G.exports and _G.exports["vector-heists"] then
+    if ctx and ctx.heistKey and _G.exports and _G.exports["vzu-heists"] then
         local ok, n = pcall(function()
-            return _G.exports["vector-heists"]:GetMaxRepPoints(ctx.heistKey)
+            return _G.exports["vzu-heists"]:GetMaxRepPoints(ctx.heistKey)
         end)
         if ok and type(n) == "number" and n > 0 then
             return n, false
@@ -154,7 +154,7 @@ function M.depositToBank(src, crewId, amountCents)
         return false, nil, perr
     end
     -- qbx_core money authoritative on wallet side
-    local removed = player.Functions.RemoveMoney("cash", dollars, "vector-crews:deposit")
+    local removed = player.Functions.RemoveMoney("cash", dollars, "vzu-crews:deposit")
     if not removed then
         return false, nil, "wallet_insufficient"
     end
@@ -164,7 +164,7 @@ function M.depositToBank(src, crewId, amountCents)
     })
     if not ok then
         -- Refund; deposit failed atomically.
-        player.Functions.AddMoney("cash", dollars, "vector-crews:deposit_refund")
+        player.Functions.AddMoney("cash", dollars, "vzu-crews:deposit_refund")
         return false, nil, derr
     end
     audit.emit("crew.bank_deposit", {
@@ -220,7 +220,7 @@ function M.withdrawFromBank(src, crewId, amountCents)
         return false, nil, derr
     end
     -- AddMoney AFTER state commit — order matches §4.2 (DB is authoritative first).
-    player.Functions.AddMoney("cash", dollars, "vector-crews:withdraw")
+    player.Functions.AddMoney("cash", dollars, "vzu-crews:withdraw")
 
     if tripped then
         local lockUntil = nowSeconds() + (Config.disbandCooldownSeconds or 86400)
@@ -328,7 +328,7 @@ function M.disbandCrew(src, crewId)
 end
 
 -- ---------------------------------------------------------------------------
--- AwardPayout (vector-heists settle path)
+-- AwardPayout (vzu-heists settle path)
 -- ---------------------------------------------------------------------------
 
 ---@param crewId integer

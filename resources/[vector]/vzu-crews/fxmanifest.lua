@@ -2,7 +2,7 @@ fx_version("cerulean")
 game("gta5")
 lua54("yes")
 
-name("vector-crews")
+name("vzu-crews")
 author("Vector")
 description("Server-authoritative crew lifecycle, bank, reputation, payout-from-heists pipeline. See VEC-22.")
 version("0.1.0")

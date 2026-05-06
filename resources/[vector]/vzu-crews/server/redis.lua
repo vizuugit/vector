@@ -1,5 +1,5 @@
--- vector-crews/server/redis.lua
--- Thin adapter exposing the subset of Redis commands vector-crews needs:
+-- vzu-crews/server/redis.lua
+-- Thin adapter exposing the subset of Redis commands vzu-crews needs:
 --   SETNX key value EX ttl  → for crew:payout_seen idempotency markers
 --   INCRBY key n + EXPIRE   → for crew:withdraw_window:{crewId}:{utcDate} bucket
 --   GET                     → for read-back paths
@@ -11,12 +11,12 @@
 --                   NOT for prod: a multi-fxserver deployment will desync.
 --   'null'        — always reports unavailable. Default so missing wiring fails closed.
 --
--- The backend is selected by convar `vector-crews:redisBackend` (default 'null').
+-- The backend is selected by convar `vzu-crews:redisBackend` (default 'null').
 -- Spec §4.3 mandates that idempotency-required callers reject with `service_degraded`
 -- when this adapter reports unavailable.
 
-local M = _G.VectorCrewsRedis or {}
-_G.VectorCrewsRedis = M
+local M = _G.VzuCrewsRedis or {}
+_G.VzuCrewsRedis = M
 
 local backend = "null"
 local store = {}      -- inmem: { [key] = { v=, expireAt= } }

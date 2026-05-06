@@ -1,6 +1,6 @@
-# vector-crews
+# vzu-crews
 
-Server-authoritative crew lifecycle, persistent crew bank/reputation, and the payout sink that `vector-heists` settles into.
+Server-authoritative crew lifecycle, persistent crew bank/reputation, and the payout sink that `vzu-heists` settles into.
 
 - Spec: [VEC-22 resource-spec](/VEC/issues/VEC-22#document-resource-spec) (Rev 2, locked).
 - Phase tracker: [VEC-37](/VEC/issues/VEC-37) (this resource — Phase 1 walking skeleton).
@@ -8,14 +8,14 @@ Server-authoritative crew lifecycle, persistent crew bank/reputation, and the pa
 
 ## Phase 1 scope
 
-**In:** migrations, `state.lua` chokepoint, deposit / withdraw / payout pipeline (with §10 Q1 anti-grief cooldown), `AwardPayout` / `AwardReputation` exports with idempotency + ceiling + optional `ctx.txn`, audit emitter, anti-cheat allowlist gate on `vector-crews:internal:*` events.
+**In:** migrations, `state.lua` chokepoint, deposit / withdraw / payout pipeline (with §10 Q1 anti-grief cooldown), `AwardPayout` / `AwardReputation` exports with idempotency + ceiling + optional `ctx.txn`, audit emitter, anti-cheat allowlist gate on `vzu-crews:internal:*` events.
 
 **Out (Phase 2):** `createCrew` / `invitePlayer` / `respondInvite` / `kickMember` / `leaveCrew` / `transferLeadership` / `setSplitConfig` server events, radio channel allocation, ox_inventory stash registration, client-side cache, NUI, locales.
 
 ## Layout
 
 ```
-vector-crews/
+vzu-crews/
 ├── fxmanifest.lua          server-only at Phase 1
 ├── shared/
 │   ├── config.lua          tunables (cooldown bps, ceilings, denylist, allowlist)
@@ -38,15 +38,15 @@ vector-crews/
 
 | Convar | Default | Effect |
 | --- | --- | --- |
-| `vector-crews:redisBackend` | `null` | One of `null` / `inmem` / `redis-fivem`. `null` rejects idempotency-required calls with `service_degraded` (matches the spec for missing redis). `inmem` is for single-process dev / local-stack happy-path testing only. |
-| `vector-crews:bigWithdrawPctBps` | (config) | Override §10 Q1 single-withdraw threshold. |
-| `vector-crews:dailyWithdrawPctBps` | (config) | Override §10 Q1 24h cumulative threshold. |
-| `vector-crews:disbandCooldownSeconds` | (config) | Override §10 Q1 cooldown duration. |
+| `vzu-crews:redisBackend` | `null` | One of `null` / `inmem` / `redis-fivem`. `null` rejects idempotency-required calls with `service_degraded` (matches the spec for missing redis). `inmem` is for single-process dev / local-stack happy-path testing only. |
+| `vzu-crews:bigWithdrawPctBps` | (config) | Override §10 Q1 single-withdraw threshold. |
+| `vzu-crews:dailyWithdrawPctBps` | (config) | Override §10 Q1 24h cumulative threshold. |
+| `vzu-crews:disbandCooldownSeconds` | (config) | Override §10 Q1 cooldown duration. |
 
 ## Tests
 
 ```
-busted resources/[vector]/vector-crews/test/
+busted resources/[vector]/vzu-crews/test/
 ```
 
 Pure-Lua validator tests; no FiveM runtime needed. Integration tests run against the [VEC-15](/VEC/issues/VEC-15) local qbox stack (deposit → payout → withdraw, idempotency, cooldown, daily window, redis-down rejection, ceiling fallback, multi-crew txn).

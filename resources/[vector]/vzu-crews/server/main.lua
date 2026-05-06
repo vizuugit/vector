@@ -1,27 +1,27 @@
--- vector-crews/server/main.lua
--- Phase 1 wiring: exports + internal events for vector-heists.
+-- vzu-crews/server/main.lua
+-- Phase 1 wiring: exports + internal events for vzu-heists.
 -- Lifecycle event handlers (createCrew/invitePlayer/etc.) land in Phase 2.
 -- Spec: VEC-22 resource-spec §2.1, §2.5.
 
 -- Modules are loaded as globals via fxmanifest server_scripts ordering.
-local Config = _G.VectorCrewsConfig
-local state = _G.VectorCrewsState
-local bank = _G.VectorCrewsBank
-local audit = _G.VectorCrewsAudit
-local redis = _G.VectorCrewsRedis
+local Config = _G.VzuCrewsConfig
+local state = _G.VzuCrewsState
+local bank = _G.VzuCrewsBank
+local audit = _G.VzuCrewsAudit
+local redis = _G.VzuCrewsRedis
 
 -- Backend selection at boot time. Operator may override via convar.
 local function bootRedisBackend()
     local mode = "null"
     if _G.GetConvar then
-        local convar = _G.GetConvar("vector-crews:redisBackend", "")
+        local convar = _G.GetConvar("vzu-crews:redisBackend", "")
         if convar and convar ~= "" then
             mode = convar
         end
     end
     redis.configure(mode)
     if _G.print then
-        _G.print(string.format("[vector-crews] redis backend = %s (available=%s)",
+        _G.print(string.format("[vzu-crews] redis backend = %s (available=%s)",
             redis.backend(), tostring(redis.available())))
     end
 end
@@ -146,7 +146,7 @@ local function rejectInvalidInternal(eventName, invoker)
 end
 
 if _G.AddEventHandler then
-    _G.AddEventHandler("vector-crews:internal:awardPayout", function(crewId, amountCents, ctx)
+    _G.AddEventHandler("vzu-crews:internal:awardPayout", function(crewId, amountCents, ctx)
         local ok, invoker = isAllowedCaller()
         if not ok then
             rejectInvalidInternal("awardPayout", invoker)
@@ -155,7 +155,7 @@ if _G.AddEventHandler then
         bank.AwardPayout(crewId, amountCents, ctx)
     end)
 
-    _G.AddEventHandler("vector-crews:internal:awardReputation", function(crewId, points, ctx)
+    _G.AddEventHandler("vzu-crews:internal:awardReputation", function(crewId, points, ctx)
         local ok, invoker = isAllowedCaller()
         if not ok then
             rejectInvalidInternal("awardReputation", invoker)
@@ -164,9 +164,9 @@ if _G.AddEventHandler then
         bank.AwardReputation(crewId, points, ctx)
     end)
 
-    -- Phase 1 stub: vector-heists will write the heist-lock key in Redis directly via its
+    -- Phase 1 stub: vzu-heists will write the heist-lock key in Redis directly via its
     -- own redis adapter; the chokepoint check exists so a future caller can flip it.
-    _G.AddEventHandler("vector-crews:internal:setHeistLock", function(_crewId, _locked, _runId)
+    _G.AddEventHandler("vzu-crews:internal:setHeistLock", function(_crewId, _locked, _runId)
         local ok, invoker = isAllowedCaller()
         if not ok then
             rejectInvalidInternal("setHeistLock", invoker)

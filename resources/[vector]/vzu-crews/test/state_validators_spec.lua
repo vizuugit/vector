@@ -1,6 +1,6 @@
--- vector-crews/test/state_validators_spec.lua
+-- vzu-crews/test/state_validators_spec.lua
 -- Pure-validator tests. No FiveM runtime, no DB, no Redis.
--- Run from repo root with: busted resources/[vector]/vector-crews/test/
+-- Run from repo root with: busted resources/[vector]/vzu-crews/test/
 -- Spec: VEC-22 §2.7, §5.4, §10 Q3.
 
 local function loadValidators()
@@ -8,10 +8,10 @@ local function loadValidators()
     local here = debug.getinfo(1, "S").source:sub(2)
     local dir = here:match("(.-)/[^/]+$") or "."
     dofile(dir .. "/../server/state.lua")
-    return _G.VectorCrewsState.validators
+    return _G.VzuCrewsState.validators
 end
 
-describe("vector-crews validators", function()
+describe("vzu-crews validators", function()
     local V
 
     setup(function()

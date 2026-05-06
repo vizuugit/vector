@@ -1,4 +1,4 @@
--- vector-crews/shared/types.lua
+-- vzu-crews/shared/types.lua
 -- Doc-comment type annotations only. No runtime side-effects.
 -- Spec: VEC-22 resource-spec §2.7.
 
