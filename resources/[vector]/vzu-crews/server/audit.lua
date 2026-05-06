@@ -1,16 +1,16 @@
--- vector-crews/server/audit.lua
+-- vzu-crews/server/audit.lua
 -- Fire-and-forget audit emitter per VEC-22 spec §4.2 step 5 and §5.1.
 --
 -- Contract:
---   * Emit `vector-crews:audit` with a §5.1-shape payload.
+--   * Emit `vzu-crews:audit` with a §5.1-shape payload.
 --   * Never await any consumer. The DB is already authoritative.
 --   * On emit error or known anticheat-down state, write ONE resource-log line
 --     `(citizenid, eventType, ts, payloadHash)` so an audit-substrate outage is
 --     still recoverable from the resource log / Loki at the resource layer.
 --   * Steps 6–7 (cache invalidate, push) MUST NOT block on audit success.
 
-local M = _G.VectorCrewsAudit or {}
-_G.VectorCrewsAudit = M
+local M = _G.VzuCrewsAudit or {}
+_G.VzuCrewsAudit = M
 
 local function nowIsoUtc()
     -- os.date("!%Y-%m-%dT%H:%M:%SZ") on Lua 5.4 yields ISO-8601 UTC.
@@ -39,12 +39,12 @@ end
 function M.emit(eventType, payload)
     payload = payload or {}
     payload.ts = payload.ts or nowIsoUtc()
-    payload.resource = "vector-crews"
+    payload.resource = "vzu-crews"
     payload.eventType = eventType
 
     local emitted = false
     if _G.TriggerEvent then
-        local ok = pcall(_G.TriggerEvent, "vector-crews:audit", payload)
+        local ok = pcall(_G.TriggerEvent, "vzu-crews:audit", payload)
         emitted = ok
     end
 
@@ -56,7 +56,7 @@ function M.emit(eventType, payload)
         if _G.print then
             _G.print(
                 string.format(
-                    "[vector-crews:audit-fallback] cid=%s eventType=%s ts=%s fp=%s",
+                    "[vzu-crews:audit-fallback] cid=%s eventType=%s ts=%s fp=%s",
                     tostring(cid),
                     eventType,
                     payload.ts,

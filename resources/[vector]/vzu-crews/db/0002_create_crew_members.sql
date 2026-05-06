@@ -1,4 +1,4 @@
--- vector-crews 0002 — crew_members rows.
+-- vzu-crews 0002 — crew_members rows.
 -- Spec: VEC-22 resource-spec §3.2.
 -- Active membership filter is `left_at IS NULL`; idx_crew_members_active makes it O(1).
 -- Forward-only: do not edit after merge.

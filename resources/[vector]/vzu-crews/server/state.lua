@@ -1,4 +1,4 @@
--- vector-crews/server/state.lua
+-- vzu-crews/server/state.lua
 -- Single chokepoint for every write to crews / crew_members / crew_cosmetic_unlocks.
 -- Spec: VEC-22 resource-spec §4.2, §7.4. Every other server file MUST go through this module.
 --
@@ -20,8 +20,8 @@
 -- bank_cents >= 0. The Lua-side clamp is for nicer error reporting + audit shape;
 -- a bug that bypasses the clamp still gets stopped at the DB.
 
-local M = _G.VectorCrewsState or {}
-_G.VectorCrewsState = M
+local M = _G.VzuCrewsState or {}
+_G.VzuCrewsState = M
 
 local Validators = M.validators or {}
 M.validators = Validators
