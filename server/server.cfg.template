@@ -1,0 +1,165 @@
+## VZU dev server — server.cfg template
+##
+## Redacted snapshot of the inherited Qbox recipe at
+## ~/dev/vzu/server-local/txData/Qbox_F913B4.base/server.cfg.
+##
+## All secrets are templated as ${VAR} and resolved from .env (see
+## ops/dev-server/.env.example). Do NOT inline literal license keys, db
+## passwords, or admin identifiers — CI greps for `cfxk_`, `mysql://`, and
+## bcrypt prefixes and will fail the build.
+##
+## Source-of-truth lives here. The deployed copy at
+## txData/Qbox_F913B4.base/server.cfg is rendered from this template at
+## boot time (entrypoint substitutes ${VAR} → env value).
+##
+## See:
+##   - docs/runbooks/local-dev-server.md      for ops (start/stop/logs/known issues)
+##   - docs/server/add-a-resource.md          for resource workflow
+##   - docs/runbooks/circuit-hack-inventory.md for resource provenance / keep-fork-scrub
+
+## Endpoints
+endpoint_add_tcp "0.0.0.0:30120"
+endpoint_add_udp "0.0.0.0:30120"
+sv_maxclients 8
+set steam_webApiKey "${STEAM_WEB_API_KEY}"
+sets tags "default, deployer, qbox"
+
+## Identity
+sv_licenseKey "${LICENSE_KEY}"
+sv_hostname "^5VZU ^7Dev ^4Local"
+sets sv_projectName "VZU Dev Local"
+sets sv_projectDesc "Vector — Development Server"
+sets locale "pt-BR"
+load_server_icon myLogo.png
+set sv_enforceGameBuild 3258
+
+## Master-list listing — empty on dev to silence the
+## "Server list query returned an error" probe spam (see
+## docs/runbooks/local-dev-server.md §Known issues). On Hetzner the box is
+## reachable, so this can be removed (FXServer default) or left empty if we
+## want to stay unlisted during closed alpha.
+set sv_master1 ""
+
+## Database — credentials come from .env
+set mysql_connection_string "mysql://${DB_USER}:${DB_PASSWORD}@mariadb/${DB_NAME}?charset=utf8mb4"
+
+## Chat config
+set resources_useSystemChat true
+set qbx_chat:joinMessage "^2%s joined the server"
+set qbx_chat:quitMessage "^1%s left the server (%s)"
+
+## Voice config
+exec voice.cfg
+
+## Qbox config
+setr qb_locale "en"
+setr qbx:enableBridge "true"
+set qbx:enableQueue "true"
+set qbx:bucketLockdownMode "inactive"
+set qbx:discordLink "${DISCORD_INVITE}"
+set qbx:max_jobs_per_player 1
+set qbx:max_gangs_per_player 1
+set qbx:setjob_replaces "true"
+set qbx:setgang_replaces "true"
+set qbx:cleanPlayerGroups "true"
+set qbx:allowMethodOverrides "true"
+set qbx:disableOverrideWarning "false"
+setr qbx:enableVehiclePersistence "false"
+setr qbx:vehiclePersistenceType "semi"
+set qbx:acknowledge "false"
+setr qbx:enableGroupManagement "false"
+setr qbx:motd "<p style='padding: 1rem; background-color: #141517; border: 1px solid #373a40; border-radius: 0.5rem; text-align: center;'><span style='color: rgb(200, 200, 40);'>Welcome to VZU Dev Local!</span></p>"
+
+## illenium-appearance locale config
+setr illenium-appearance:locale "en"
+
+## Renewed-Weathersync config
+setr weather_disablecd true
+
+## Ox resources config
+exec ox.cfg
+
+## NPWD config
+set npwd:framework "qbx"
+set SCREENSHOT_BASIC_TOKEN "${SCREENSHOT_BASIC_TOKEN}"
+set NPWD_AUDIO_TOKEN "${NPWD_AUDIO_TOKEN}"
+
+## loadscreen config
+setr loadscreen:externalShutdown true
+set loadscreen:primaryColor "#f1e542"
+set loadscreen:shadowColor "#1a18077f"
+
+## ────────────────────────────────────────────────────────────
+## Resource load order — bulk-ensures load every resource in a
+## [category]/ folder; explicit `ensure name` lines pin singletons.
+## See docs/server/add-a-resource.md for conventions.
+## ────────────────────────────────────────────────────────────
+
+## FXServer defaults
+ensure mapmanager
+ensure chat
+ensure spawnmanager
+ensure sessionmanager
+stop basic-gamemode
+ensure hardcap
+ensure baseevents
+
+## Qbox base + extras
+ensure ox_lib
+ensure qbx_core
+ensure ox_target
+ensure [ox]
+ensure [qbx]
+ensure [standalone]
+ensure [voice]
+ensure [assets]
+
+## Phone framework
+ensure [npwd-apps]
+ensure qbx_npwd
+ensure npwd
+
+## Database driver
+ensure oxmysql
+
+## VZU resources (our gameplay code)
+##
+## Folder layout migrates over the cutover ([VEC-2 plan §3](/VEC/issues/VEC-2#document-plan)):
+##   - Today (inherited dev box): resources live under `[vzu]/` and are
+##     loaded by name (`ensure vzu_circuit_hack`).
+##   - Post-cutover (monorepo deploys):  resources live under `[vector]/`
+##     and are loaded as a bulk group (`ensure [vector]`).
+##
+## Both forms below — the one that runs depends on which folder exists in
+## the rendered txData. FXServer logs `Couldn't find resource` and skips
+## missing entries, so this is safe; pick the matching pair when you cut
+## over and remove the other.
+
+# Today — explicit names, resources live under [vzu]/
+ensure vzu_circuit_hack
+# vzu_circuit_hack_test_zone (smoke rig from Circuit Hack) is dev-only —
+# it gives free $100k payouts and admin shortcuts. NEVER ensure it on a
+# public-facing or alpha-ready build. The resource lives outside resources/
+# (under tools/dev-bench/ post-cutover, see
+# docs/runbooks/circuit-hack-inventory.md). The inherited txData copy
+# currently has it ensured with an inline comment "remove esta linha
+# quando terminar as capturas promo" — that line gets dropped before any
+# promote.
+
+# Post-cutover — bulk group, resources live under [vector]/
+# Uncomment when the monorepo cutover lands and txData is rendered from
+# resources/[vector]/* (delete the explicit `ensure vzu_circuit_hack`
+# line above at the same time).
+# ensure [vector]
+
+## ────────────────────────────────────────────────────────────
+## Permissions
+## ────────────────────────────────────────────────────────────
+## Admin principals — DO NOT add literal FiveM identifiers here. Use
+## `${ADMIN_FIVEM_PRINCIPAL}` from .env, or rely on txAdmin's admins.json
+## (which is gitignored and lives outside the repo).
+add_principal "${ADMIN_FIVEM_PRINCIPAL}" group.admin
+exec permissions.cfg
+
+## Miscellaneous
+exec misc.cfg
