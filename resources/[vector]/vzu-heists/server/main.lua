@@ -1,23 +1,23 @@
--- vector-heists/server/main.lua
+-- vzu-heists/server/main.lua
 -- Wires the pure state-machine module to the CitizenFX runtime: oxmysql for
 -- persistence, FiveM events for intents, exports for read-only queries, a
 -- timed thread for deadline enforcement, and a boot-time migration + recovery
 -- pass.
 -- Spec: VEC-23 resource-spec §4 (events + exports), §5 (DB), §6 (recovery).
 
-local SM = _G.VectorHeists_SM or require("server.state_machine")
+local SM = _G.VzuHeists_SM or require("server.state_machine")
 
-local RESOURCE = "vector-heists"
+local RESOURCE = "vzu-heists"
 local TICK_INTERVAL_MS = 1000
 
 -- ---------------------------------------------------------------------------
 -- Migration runner. Apply db/*.sql once at resource start. We track applied
--- files in vector_heists_migrations (auto-created) so re-running the resource
+-- files in vzu_heists_migrations (auto-created) so re-running the resource
 -- is idempotent. Apply via the qbox-standard oxmysql driver.
 
 local function applyMigrations()
     MySQL.query.await([[
-        CREATE TABLE IF NOT EXISTS vector_heists_migrations (
+        CREATE TABLE IF NOT EXISTS vzu_heists_migrations (
             file_name  VARCHAR(255) NOT NULL,
             applied_at DATETIME(3)  NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
             PRIMARY KEY (file_name)
@@ -26,13 +26,13 @@ local function applyMigrations()
 
     local files = { "db/0001_create_heist_runs.sql" }
     for _, name in ipairs(files) do
-        local applied = MySQL.scalar.await("SELECT 1 FROM vector_heists_migrations WHERE file_name = ?", { name })
+        local applied = MySQL.scalar.await("SELECT 1 FROM vzu_heists_migrations WHERE file_name = ?", { name })
         if not applied then
             local sql = LoadResourceFile(RESOURCE, name)
-            assert(sql and #sql > 0, "vector-heists: migration file missing: " .. name)
+            assert(sql and #sql > 0, "vzu-heists: migration file missing: " .. name)
             MySQL.query.await(sql)
-            MySQL.query.await("INSERT INTO vector_heists_migrations (file_name) VALUES (?)", { name })
-            print(("[vector-heists] applied migration %s"):format(name))
+            MySQL.query.await("INSERT INTO vzu_heists_migrations (file_name) VALUES (?)", { name })
+            print(("[vzu-heists] applied migration %s"):format(name))
         end
     end
 end
@@ -136,9 +136,9 @@ end
 local Audit = function(event)
     if event.push then
         -- §4.4 client:state push. Only crew members receive it.
-        local netIds = exports["vector-crews"]:GetCrewNetIds(event.crew_id) or {}
+        local netIds = exports["vzu-crews"]:GetCrewNetIds(event.crew_id) or {}
         for _, src in ipairs(netIds) do
-            TriggerClientEvent("vector-heists:client:state", src, {
+            TriggerClientEvent("vzu-heists:client:state", src, {
                 runId = event.run_id,
                 templateKey = event.template_key,
                 state = event.details.state,
@@ -151,18 +151,18 @@ local Audit = function(event)
         return
     end
     -- §4.5 server-internal audit channel. The Loki sink wires VEC-35.
-    TriggerEvent("vector-heists:server:audit", event)
+    TriggerEvent("vzu-heists:server:audit", event)
 end
 
 local Crews = {
     getCrewByCitizen = function(citizenid)
-        return exports["vector-crews"]:GetCrewByCitizen(citizenid)
+        return exports["vzu-crews"]:GetCrewByCitizen(citizenid)
     end,
     getCrewById = function(crewId)
-        return exports["vector-crews"]:GetCrewById(crewId)
+        return exports["vzu-crews"]:GetCrewById(crewId)
     end,
     isLeader = function(citizenid, crewId)
-        return exports["vector-crews"]:IsLeader(citizenid, crewId)
+        return exports["vzu-crews"]:IsLeader(citizenid, crewId)
     end,
     -- VEC-35 owns the bucket allocator; the foundation hands out a deterministic
     -- per-run id so the state machine can be exercised end-to-end without it.
@@ -173,17 +173,17 @@ local Crews = {
         return true
     end,
     awardPayout = function(crewId, runId, payoutCents, splits)
-        return exports["vector-crews"]:AwardPayout(crewId, runId, payoutCents, splits)
+        return exports["vzu-crews"]:AwardPayout(crewId, runId, payoutCents, splits)
     end,
     awardReputation = function(crewId, runId, repPoints)
-        return exports["vector-crews"]:AwardReputation(crewId, runId, repPoints)
+        return exports["vzu-crews"]:AwardReputation(crewId, runId, repPoints)
     end,
-    -- §6.2 pre/post payout discriminator. Wires through to vector-crews's audit
+    -- §6.2 pre/post payout discriminator. Wires through to vzu-crews's audit
     -- log via VEC-22's API; until that lands the boot scan will always treat
     -- crashed-Settle as pre-payout (forfeit, no double-pay risk).
     lookupAwardedPayout = function(runId)
-        if exports["vector-crews"] and exports["vector-crews"].LookupAwardedPayout then
-            return exports["vector-crews"]:LookupAwardedPayout(runId)
+        if exports["vzu-crews"] and exports["vzu-crews"].LookupAwardedPayout then
+            return exports["vzu-crews"]:LookupAwardedPayout(runId)
         end
         return nil
     end,
@@ -215,7 +215,7 @@ Registry = {
 }
 
 local Log = function(level, msg, ctx)
-    print(("[vector-heists][%s] %s %s"):format(level, msg, ctx and json.encode(ctx) or ""))
+    print(("[vzu-heists][%s] %s %s"):format(level, msg, ctx and json.encode(ctx) or ""))
 end
 
 local sm
@@ -250,7 +250,7 @@ end)
 
 -- ---------------------------------------------------------------------------
 -- Server intent events (§4.3). All accept intents only; values flow back via
--- vector-heists:client:state push, never via event reply.
+-- vzu-heists:client:state push, never via event reply.
 
 local function citizenidFor(src)
     if exports.qbx_core and exports.qbx_core.GetPlayer then
@@ -261,28 +261,28 @@ local function citizenidFor(src)
 end
 
 local INTENT_HANDLERS = {
-    ["vector-heists:server:acceptHeist"] = function(cid, payload)
+    ["vzu-heists:server:acceptHeist"] = function(cid, payload)
         return sm:acceptHeist(cid, payload.templateKey)
     end,
-    ["vector-heists:server:cancelBrief"] = function(cid, payload)
+    ["vzu-heists:server:cancelBrief"] = function(cid, payload)
         return sm:cancelBrief(cid, payload.runId)
     end,
-    ["vector-heists:server:declareReady"] = function(cid, payload)
+    ["vzu-heists:server:declareReady"] = function(cid, payload)
         return sm:declareReady(cid, payload.runId)
     end,
-    ["vector-heists:server:enterScore"] = function(cid, payload)
+    ["vzu-heists:server:enterScore"] = function(cid, payload)
         return sm:enterScore(cid, payload.runId)
     end,
-    ["vector-heists:server:declareEscape"] = function(cid, payload)
+    ["vzu-heists:server:declareEscape"] = function(cid, payload)
         return sm:declareEscape(cid, payload.runId)
     end,
-    ["vector-heists:server:declareSettle"] = function(cid, payload)
+    ["vzu-heists:server:declareSettle"] = function(cid, payload)
         return sm:declareSettle(cid, payload.runId)
     end,
-    ["vector-heists:server:reportLoot"] = function(cid, payload)
+    ["vzu-heists:server:reportLoot"] = function(cid, payload)
         return sm:reportLoot(cid, payload.runId, payload.lootEntityNetId)
     end,
-    ["vector-heists:server:reportPosition"] = function(cid, payload)
+    ["vzu-heists:server:reportPosition"] = function(cid, payload)
         return sm:reportPosition(cid, payload.runId, payload.x, payload.y, payload.z, payload.t)
     end,
 }

@@ -1,11 +1,11 @@
--- vector-heists/test/state_machine_test.lua
+-- vzu-heists/test/state_machine_test.lua
 -- Pure-Lua unit tests for the heist state machine.
--- Run from the repo root with:  lua resources/[vector]/vector-heists/test/state_machine_test.lua
+-- Run from the repo root with:  lua resources/[vector]/vzu-heists/test/state_machine_test.lua
 -- Spec: VEC-23 resource-spec §2.1 (transitions), §2.2 (deadlines), §6.2 (recovery).
 
 package.path = table.concat({
-    "resources/[vector]/vector-heists/?.lua",
-    "resources/[vector]/vector-heists/?/init.lua",
+    "resources/[vector]/vzu-heists/?.lua",
+    "resources/[vector]/vzu-heists/?/init.lua",
     package.path,
 }, ";")
 
@@ -256,7 +256,7 @@ test("happy path Brief→Prep→Execute→Escape→Settle→done", function()
     assertEq(store.rows[runId].status, "done", "Settle→done")
     assertEq(store.rows[runId].payout_cents, 80000, "payout_cents recorded")
     assertEq(store.rows[runId].reputation_points, 80, "rep_points recorded")
-    assertTrue(crews._awarded[runId] ~= nil, "vector-crews:AwardPayout called")
+    assertTrue(crews._awarded[runId] ~= nil, "vzu-crews:AwardPayout called")
     assertTrue(#eventsOfType(audit, "PayoutSettled") == 1, "PayoutSettled audit emitted")
 end)
 
@@ -285,7 +285,7 @@ test("Prep — crew_lock_fail → aborted (member churn at enterScore)", functio
     local runId = rig.sm:acceptHeist("CID-A", "jewelry_score")
     rig.sm:declareReady("CID-A", runId)
     rig.sm:declareReady("CID-B", runId)
-    -- Simulate member churn: vector-crews now reports a smaller crew when we
+    -- Simulate member churn: vzu-crews now reports a smaller crew when we
     -- try to lock at enterScore.
     rig.crews.getCrewById = function(_)
         return { id = 7, members = { "CID-A" } }

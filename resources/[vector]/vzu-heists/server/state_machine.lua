@@ -1,4 +1,4 @@
--- vector-heists/server/state_machine.lua
+-- vzu-heists/server/state_machine.lua
 -- Pure-ish state machine for heist runs. No FiveM globals; deps are injected so
 -- the test harness can drive the full state graph without a CitizenFX runtime.
 -- Spec: VEC-23 resource-spec §2 (states + deadlines), §4.3 (intents), §6 (crash recovery).
@@ -127,7 +127,7 @@ end
 
 local function emitAudit(self, run, event, severity, details)
     self.deps.audit({
-        resource = "vector-heists",
+        resource = "vzu-heists",
         event = event,
         severity = severity or "audit",
         run_id = run and run.id or nil,
@@ -159,7 +159,7 @@ end
 
 local function pushState(self, run)
     self.deps.audit({
-        resource = "vector-heists",
+        resource = "vzu-heists",
         event = "ClientStatePush",
         severity = "info",
         run_id = run.id,
@@ -313,7 +313,7 @@ function M:enterScore(citizenid, runId)
         return false, "not_leader"
     end
 
-    -- Crew lock — verify membership against vector-crews.
+    -- Crew lock — verify membership against vzu-crews.
     local crew = self.deps.crews.getCrewById(run.crew_id)
     if not crew then
         return self:_endRun(run, "aborted", "crew_lock_fail")
@@ -393,7 +393,7 @@ function M:declareSettle(citizenid, runId)
     local payoutCents, repPoints, splits = self:_computePayout(run)
 
     -- Order matters for §6.4 reconcile semantics: payout is the irreversible
-    -- side-effect; mark our own row only after vector-crews has committed.
+    -- side-effect; mark our own row only after vzu-crews has committed.
     local okPay, errPay = self.deps.crews.awardPayout(run.crew_id, run.id, payoutCents, splits)
     if not okPay then
         return self:_endRun(run, "forfeit", "settle_payout_failed:" .. tostring(errPay))
@@ -602,7 +602,7 @@ function M:bootRecover()
         end
         if before == "settle" then
             -- Distinguish pre-payout vs post-payout (§6.2). We consult the
-            -- vector-crews audit log for an AwardPayout matching this runId.
+            -- vzu-crews audit log for an AwardPayout matching this runId.
             -- In tests the stub returns nil for pre-payout, an integer for
             -- post-payout.
             local credited = self.deps.crews.lookupAwardedPayout(runId)
@@ -668,10 +668,10 @@ M._isInFlight = isInFlight
 -- Bridge between FiveM (no `require` for sibling server_scripts) and the test
 -- harness (uses Lua's standard `require`). FiveM execution sees the module
 -- via a global; tests get it via the return value.
-if rawget(_G, "package") and not rawget(_G, "VectorHeists_SM") then
-    _G.VectorHeists_SM = M
+if rawget(_G, "package") and not rawget(_G, "VzuHeists_SM") then
+    _G.VzuHeists_SM = M
 elseif _G then
-    _G.VectorHeists_SM = M
+    _G.VzuHeists_SM = M
 end
 
 return M

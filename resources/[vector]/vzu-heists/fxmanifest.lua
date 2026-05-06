@@ -2,7 +2,7 @@ fx_version("cerulean")
 game("gta5")
 lua54("yes")
 
-name("vector-heists")
+name("vzu-heists")
 author("Vector")
 description("Heist state machine, mission templates, bucket allocator, and heist_runs storage. See VEC-23.")
 version("0.1.0")
