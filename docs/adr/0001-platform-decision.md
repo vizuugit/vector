@@ -3,7 +3,9 @@
 - Status: **Accepted** — 2026-05-05
 - Authors: CTO
 - Supersedes: —
-- Related: VEC-2 (technical roadmap & platform pick)
+- Related: VEC-2 (technical roadmap & platform pick), VEC-46 / VEC-48 (B2B repositioning)
+
+> **2026-05-06 note:** This ADR was originally written under a "Vector ships a flagship multiplayer server" framing. The studio has since repositioned as a **B2B GTA-RP / UGC dev studio** building mods/scripts/MLOs/models for FiveM server-owner clients (see [VEC-46](/VEC/issues/VEC-46) / [VEC-48](/VEC/issues/VEC-48)). The platform decision (FiveM + qbox) still stands — it is now justified by *where our clients run* rather than where we run our own server. ADRs are append-only history; the rest of this document is preserved as written.
 
 ## Context
 

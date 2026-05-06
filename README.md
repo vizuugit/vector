@@ -1,32 +1,36 @@
-# Vector
+# VECTOR ZEN [U]
 
-A small GTA mod & server dev studio. We build mods, content, and a flagship FiveM server, and we work in the open.
+An independent dev studio building **mods, scripts, MLOs, and 3D models for GTA-RP / UGC**. Our clients are FiveM server owners — we deliver products to them; we are not currently operating a public server of our own.
 
-> **Status:** day-zero scaffold. There is no playable server yet. This repo exists so the work is public from the start.
+> **Status:** day-zero scaffold. The studio is shipping its first products from this repo and working in the open. Brand wordmark: **`VECTOR ZEN [U]`**. Repository, package, and resource names continue to use the `vector-*` namespace.
 
 ## Mission
 
-Ship a flagship FiveM RP server, premium-but-tasteful mods, and the content that drives players to both. Tech choices serve those three pillars; everything else is overhead.
+Be the dev studio FiveM server owners trust to ship the things they cannot build themselves: bespoke gameplay scripts, MLOs, vehicle and character models, art-direction-coherent UGC. Each product earns its own keep; we work in public so prospective clients can audit the engineering before they buy.
 
-## Tech stack (target)
+## Tech stack — internal dev/test rig
+
+This studio runs a local FiveM/QBox dev server purely as **internal infrastructure for building, integrating, and validating client-bound products**. It is a dev rig, not a flagship product.
 
 | Layer            | Choice                                  | Notes                                                    |
 | ---------------- | --------------------------------------- | -------------------------------------------------------- |
-| Server platform  | FiveM (CitizenFX)                       | See [ADR-0001](docs/adr/0001-platform-decision.md).      |
-| Resource base    | qbox                                    | MIT-licensed core, fork-ready, active community.         |
+| Target platform  | FiveM (CitizenFX)                       | See [ADR-0001](docs/adr/0001-platform-decision.md).      |
+| Resource base    | qbox                                    | MIT-licensed core, fork-ready, dominant in client repos. |
 | Server scripting | Lua (resources), some C# / JS as needed |                                                          |
 | Database         | MariaDB                                 | The FiveM-native default. Migrations live in [`db/`](db).|
 | Cache            | Redis                                   | For sessions, queues, server-side state.                 |
-| Anti-cheat       | EAC + server-side checks                |                                                          |
-| Host             | Hetzner dedicated, monthly budget cap   | See [`docs/infra-spend.md`](docs/infra-spend.md).        |
+| Anti-cheat       | EAC + server-side checks                | Posture inherited so our products integrate cleanly.     |
+| Dev hosting      | Local + low-cost cloud (cap tracked)    | See [`docs/infra-spend.md`](docs/infra-spend.md).        |
 | CI               | GitHub Actions                          | Lua lint (luacheck + stylua) + format. CI lands later.   |
+
+We optimize this rig for *parity with realistic client servers* — if a script ships against this stack, it should drop into a typical qbox-based RP server with minimal integration work.
 
 ## Repo layout
 
 ```
 vector/
 ├── server/                # FiveM server config + recipe (txAdmin templates, server.cfg fragments)
-├── resources/             # FiveM resources (qbox + our own)
+├── resources/             # FiveM resources (qbox + our own vector-* products)
 ├── db/                    # SQL migrations (forward-only)
 ├── tools/                 # asset converters, deploy scripts, dev helpers
 ├── ops/                   # Ansible playbooks, terraform, runbooks-adjacent automation
@@ -44,7 +48,7 @@ Vendored third-party content (qbox, community resources, art assets) keeps its o
 
 ## A note on Rockstar / Take-Two IP
 
-This project does not redistribute Rockstar Games assets. To run the server you supply your own legitimately-acquired GTA V install. We avoid monetizing Rockstar IP directly. Free mods that interoperate with FiveM follow the FiveM Terms of Service and the Cfx.re platform rules.
+This studio does not redistribute Rockstar Games assets. Our products integrate with FiveM and require clients/players to supply their own legitimately-acquired GTA V install. We avoid monetizing Rockstar IP directly. Free and commercial mods that interoperate with FiveM follow the FiveM Terms of Service and the Cfx.re platform rules.
 
 ## Contributing
 
@@ -59,8 +63,8 @@ When it does open, the rules will be:
 
 ## Architecture decisions
 
-ADRs live in [`docs/adr/`](docs/adr). Start with [`0001-platform-decision.md`](docs/adr/0001-platform-decision.md).
+ADRs live in [`docs/adr/`](docs/adr). Start with [`0001-platform-decision.md`](docs/adr/0001-platform-decision.md). Note that ADR-0001 was originally written under a "flagship server" framing; the platform pick (FiveM + qbox) still stands under the current B2B positioning. See the leading note in that ADR for context.
 
 ## Where work is tracked
 
-Issues, roadmap, and decisions are tracked outside this repo. The first 30/60/90-day plan is in our internal Paperclip workspace as `VEC-2`. We will start mirroring user-visible milestones into this repo's Issues once the server has a closed alpha.
+Issues, roadmap, and decisions are tracked outside this repo in our internal Paperclip workspace. User-visible product milestones will be mirrored into this repo's Issues as products approach release.
