@@ -35,6 +35,8 @@ venv/
 # txData lives outside the repo on prod; locally it should never be committed.
 txData/
 server-data/
+mariadb-data/
+admins.json
 cache/
 crashes/
 *.dmp
