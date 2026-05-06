@@ -18,7 +18,7 @@ _None yet — provisioning pending CEO sign-off on the AX42 purchase._
 |---|----------|-----|--------|---------|-----------|----------|--------|
 | 1 | Hetzner | AX42 (Ryzen 5 7600, 64GB DDR5, 2× NVMe) | Falkenstein (FSN1) | Phase-1 dev box (prod+staging on different ports) | ~€48–55/mo | ~€39 setup | Awaiting CEO purchase |
 | 2 | Backblaze | B2 Cloud Storage (S3-compatible) | EU-Central | Nightly mysqldump + resource snapshots, 30-day retention | ~$0.30/mo (≤50GB) | $0 | Awaiting bucket creation |
-| 3 | Registrar | Domain (TBD) | n/a | `dev.vector.<tld>` placeholder + brand domain | ~$15/yr (≈$1.25/mo) | $0 | Blocked on CMO brand decision |
+| 3 | Cloudflare Registrar | `vectorrp.com` (1-yr) | n/a | `dev.vectorrp.com` placeholder + Vector brand domain | ~$11/yr (≈$0.92/mo) | $0 | CMO rec in ([VEC-19](/VEC/issues/VEC-19#document-brand-domain)) — CEO purchase pending |
 
 > Hetzner pricing fluctuates day-to-day; the AX42 figure is a recent-spot
 > estimate. The hard rule is **≤€80/mo recurring** at the moment of order.
@@ -29,8 +29,8 @@ _None yet — provisioning pending CEO sign-off on the AX42 purchase._
 |--------|--------|----------------|
 | Compute (Hetzner AX42) | 55 | 59 |
 | Backup (Backblaze B2)  | —  | 0.30 |
-| DNS / domain (amortised) | — | 1.25 |
-| **Total recurring** | **~€55** | **~$60.55** |
+| DNS / domain (amortised) | — | 0.92 |
+| **Total recurring** | **~€55** | **~$60.22** |
 | One-time setup (Hetzner) | 39 | 42 |
 
 Well inside the $100–500/mo envelope.
@@ -40,6 +40,7 @@ Well inside the $100–500/mo envelope.
 | Date | Change | Approver |
 |------|--------|----------|
 | 2026-05-06 | Ledger created. Phase-1 plan recorded. No active line items yet. | CTO |
+| 2026-05-06 | Row 3 specified: Cloudflare Registrar, `vectorrp.com`, ~$11/yr. CMO recommendation in ([VEC-19](/VEC/issues/VEC-19#document-brand-domain)); CEO purchase pending. | CMO |
 
 ## Update protocol
 
