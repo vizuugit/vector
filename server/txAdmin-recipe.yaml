@@ -68,43 +68,67 @@ variables:
 # docs/runbooks/local-dev-server.md → Migration path).
 # ─────────────────────────────────────────────────────────────
 
-tasks:
+tasks: []
   # ─────────────────────────────────────────────────────────────────────
-  # This recipe intentionally captures the SHAPE of a fresh deploy
-  # rather than the full task list. The inherited dev box was built from
-  # the upstream Qbox recipe (commit F913B4), and we have not yet pinned
-  # commits per resource for our own redistribution.
+  # NOT A RUNNABLE RECIPE YET — this file documents the SHAPE of a
+  # future fresh-deploy recipe. txAdmin will reject the recipe metadata
+  # above with an empty `tasks` list, which is intentional: do not point
+  # txAdmin's "Deploy" flow at this file. Use the upstream Qbox recipe
+  # directly until monorepo cutover.
   #
-  # The full task list (~70 download_github / move_path / replace_string
-  # entries) gets ported here as part of the monorepo cutover, when each
-  # vendored resource lands under resources/[vendor]/<name>/ with its
-  # own VENDORED.md. See:
-  #   - docs/runbooks/local-dev-server.md   §Migration path
+  # Why empty: a runnable recipe needs the full per-resource task list
+  # (~70 entries for qbox + ox + standalone + voice + assets + npwd, plus
+  # post-deploy `move_path` + `replace_string` entries that bind .env
+  # secrets into server.cfg). We have not yet pinned upstream commits per
+  # resource for our own redistribution, and shipping a half-runnable
+  # recipe (with `query_database` against files no `download_github` ever
+  # placed, or with a `write_file` of a non-functional server.cfg stub)
+  # would silently break fresh deploys for whoever runs it first.
+  #
+  # The full task list lands here as part of the monorepo cutover, when
+  # each vendored resource gets a `resources/[vendor]/<name>/` folder
+  # with its own `VENDORED.md` (upstream URL, commit pin, license).
+  #
+  # Reference shape for the cutover (do NOT uncomment until each
+  # download_github entry is real):
+  #
+  #   # 1. Pull each vendored resource at its pinned commit
+  #   - action: download_github
+  #     src: https://github.com/Qbox-project/qbx_core
+  #     ref: <pinned-commit>
+  #     dest: ./resources/[qbx]/qbx_core
+  #   - action: download_github
+  #     src: https://github.com/overextended/ox_lib
+  #     ref: <pinned-commit>
+  #     dest: ./resources/[ox]/ox_lib
+  #   # …~70 more download_github entries, one per [ox]/[qbx]/[standalone]/
+  #   # [voice]/[assets]/[npwd]/[npwd-apps] resource per the inventory in
+  #   # docs/runbooks/circuit-hack-inventory.md
+  #
+  #   # 2. Pull our [vector]/ resources from the monorepo
+  #   - action: download_github
+  #     src: https://github.com/<org>/vector
+  #     ref: main
+  #     subpath: resources/[vector]
+  #     dest: ./resources/[vector]
+  #
+  #   # 3. Render server.cfg from the template, substituting ${VAR} from
+  #   # the deployer-prompt + .env values
+  #   - action: write_file
+  #     file: ./server.cfg
+  #     data: <full server/server.cfg.template content with substitutions>
+  #
+  #   # 4. Bootstrap oxmysql schema (oxmysql ships an install.sql; this
+  #   # task can only run AFTER step 1 has placed the file on disk)
+  #   - action: query_database
+  #     file: ./resources/[ox]/oxmysql/scripts/sql/install.sql
+  #
+  # See:
+  #   - docs/runbooks/local-dev-server.md       §Migration path
   #   - docs/runbooks/circuit-hack-inventory.md  for the keep-fork-scrub list
+  #   - docs/server/migrations.md                for the ongoing-schema flow
+  #     (per-resource SQL goes through `db/migrations/`, not the recipe)
   # ─────────────────────────────────────────────────────────────────────
-
-  # 1. Pull qbox base + ox + standalone resources
-  # Per-resource `download_github` tasks go here, mirrored from the
-  # upstream Qbox recipe at the pinned commit. Until cutover, fresh
-  # deploys reuse the upstream Qbox recipe directly and we patch our
-  # [vector]/ resources in afterwards.
-
-  # 2. Drop our server.cfg into place (rendered from the template)
-  - action: write_file
-    file: ./server.cfg
-    data: |
-      # Rendered from server/server.cfg.template at deploy time.
-      # See repo: server/server.cfg.template
-
-  # 3. Database bootstrap (schemas owned by individual resources)
-  # oxmysql ships an install.sql that initialises framework tables.
-  - action: query_database
-    file: ./resources/[ox]/oxmysql/scripts/sql/install.sql
-
-  # 4. Vector-owned resources
-  # download_github task(s) for resources/[vector]/* land here once
-  # the public monorepo URL is stable. Until then, operators sync the
-  # [vector]/ folder out-of-band.
 
 # ─────────────────────────────────────────────────────────────────────
 # Notes for the operator:

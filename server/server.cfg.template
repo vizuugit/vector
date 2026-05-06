@@ -123,17 +123,34 @@ ensure npwd
 ensure oxmysql
 
 ## VZU resources (our gameplay code)
-ensure [vector]
-# Any explicit-ordered VZU resource goes below — bulk-ensure above
-# already loads everything in [vector]/ alphabetically.
-#
+##
+## Folder layout migrates over the cutover ([VEC-2 plan §3](/VEC/issues/VEC-2#document-plan)):
+##   - Today (inherited dev box): resources live under `[vzu]/` and are
+##     loaded by name (`ensure vzu_circuit_hack`).
+##   - Post-cutover (monorepo deploys):  resources live under `[vector]/`
+##     and are loaded as a bulk group (`ensure [vector]`).
+##
+## Both forms below — the one that runs depends on which folder exists in
+## the rendered txData. FXServer logs `Couldn't find resource` and skips
+## missing entries, so this is safe; pick the matching pair when you cut
+## over and remove the other.
+
+# Today — explicit names, resources live under [vzu]/
+ensure vzu_circuit_hack
 # vzu_circuit_hack_test_zone (smoke rig from Circuit Hack) is dev-only —
 # it gives free $100k payouts and admin shortcuts. NEVER ensure it on a
 # public-facing or alpha-ready build. The resource lives outside resources/
-# (under tools/dev-bench/ post-cutover, see VEC-15 inventory). Today the
-# inherited dev box still has it ensured in its txData copy with an
-# inline comment "remove esta linha quando terminar as capturas promo" —
-# that line gets dropped before any promote.
+# (under tools/dev-bench/ post-cutover, see
+# docs/runbooks/circuit-hack-inventory.md). The inherited txData copy
+# currently has it ensured with an inline comment "remove esta linha
+# quando terminar as capturas promo" — that line gets dropped before any
+# promote.
+
+# Post-cutover — bulk group, resources live under [vector]/
+# Uncomment when the monorepo cutover lands and txData is rendered from
+# resources/[vector]/* (delete the explicit `ensure vzu_circuit_hack`
+# line above at the same time).
+# ensure [vector]
 
 ## ────────────────────────────────────────────────────────────
 ## Permissions
