@@ -1,4 +1,4 @@
--- vector-heists 0001 — heist_runs operational state.
+-- vzu-heists 0001 — heist_runs operational state.
 -- Spec: VEC-23 resource-spec §5.2, §5.3.
 -- Audit log lives in Loki, not here. This table is operational state only.
 

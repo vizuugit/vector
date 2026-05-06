@@ -1,4 +1,4 @@
--- vector-heists/shared/types.lua
+-- vzu-heists/shared/types.lua
 -- Doc-comment type annotations only. No runtime side-effects.
 -- Spec: VEC-23 resource-spec §3.1 (template), §5.2 (run row), §4 (events).
 
@@ -53,7 +53,7 @@
 ---@field deadline_at_ms integer
 ---@field members string[]      -- citizenids; locked at Brief→Execute
 ---@field ready_set table<string, boolean>
----@field payout_committed boolean? -- true once vector-crews:AwardPayout returned, before status=done
+---@field payout_committed boolean? -- true once vzu-crews:AwardPayout returned, before status=done
 ---@field loot_picked table<integer, string>? -- net_id → item key, server-tracked
 
 ---@class HeistJobBoardEntry

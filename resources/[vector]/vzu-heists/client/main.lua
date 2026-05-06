@@ -1,5 +1,5 @@
--- vector-heists/client/main.lua
--- State-cache reducer: ingests vector-heists:client:state pushes from the
+-- vzu-heists/client/main.lua
+-- State-cache reducer: ingests vzu-heists:client:state pushes from the
 -- server and exposes derived read-only exports (§4.2). Client never trusts a
 -- value it didn't receive via push — these exports are convenience accessors
 -- over the cache, not authoritative.
@@ -8,7 +8,7 @@ local activeRun = nil -- last :state push for the local player's run
 local jobBoard = {} -- last :jobBoard push (templateKey → entry)
 local cooldowns = {} -- last :state-derived cooldown view
 
-RegisterNetEvent("vector-heists:client:state", function(payload)
+RegisterNetEvent("vzu-heists:client:state", function(payload)
     if payload == nil then
         activeRun = nil
         return
@@ -31,7 +31,7 @@ RegisterNetEvent("vector-heists:client:state", function(payload)
     }
 end)
 
-RegisterNetEvent("vector-heists:client:jobBoard", function(entries)
+RegisterNetEvent("vzu-heists:client:jobBoard", function(entries)
     jobBoard = {}
     if type(entries) ~= "table" then
         return
@@ -48,7 +48,7 @@ RegisterNetEvent("vector-heists:client:jobBoard", function(entries)
     end
 end)
 
-RegisterNetEvent("vector-heists:client:settle", function(_payload)
+RegisterNetEvent("vzu-heists:client:settle", function(_payload)
     -- Settle event carries cents — handled by the NUI cash-counter (VEC-35
     -- integration child). Foundation just clears the active-run cache.
     activeRun = nil
