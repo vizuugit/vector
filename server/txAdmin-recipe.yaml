@@ -1,0 +1,128 @@
+# VZU dev server — txAdmin deployer recipe
+#
+# This file lets a fresh box reproduce the inherited
+# `Qbox_F913B4.base` deployment via txAdmin's "Deployer" flow.
+#
+# Source: upstream Qbox recipe, vendored as a starting point and
+# overlaid with VZU-specific load_resource lines.
+#
+# Upstream:    https://github.com/Qbox-project/recipe
+# Pinned at:   commit F913B4 (matches the inherited recipe folder name)
+# License:     GPL-3.0
+#
+# How to use (fresh box):
+#
+#   1. Install Docker + docker-compose-plugin.
+#   2. Bring up the stack with the sibling docker-compose.yml + .env
+#      (FXServer + MariaDB + Adminer).
+#   3. Visit http://localhost:40120 → "Setup new server" → "Deploy".
+#   4. Paste the URL of THIS file (or its raw content) when prompted.
+#   5. txAdmin clones, applies replacers, runs migrations, drops
+#      ${VARS} from .env into the rendered server.cfg.
+#
+# After deploy, the runtime config lives at:
+#
+#   txData/<recipe-name>/server.cfg   ← rendered from server.cfg.template
+#   txData/<recipe-name>/resources/   ← cloned per `download_*` tasks
+#
+# The deployed `server.cfg` is regenerated each deploy. Source-of-truth
+# is `server/server.cfg.template` in this repo — edit there, redeploy
+# the recipe, never hand-edit the rendered file.
+
+$engine: 5
+$onesync: on
+$minFxVersion: 12000
+
+name: vzu-dev-local
+version: 0.1.0
+author: VZU Studio
+description: Vector Zen Underground dev server (Qbox-based, dev-only)
+
+# Variables prompted at deploy time (or pulled from .env). Match
+# server.cfg.template — keep these names in sync.
+variables:
+  - name: dbHost
+    label: MariaDB host
+    default: mariadb
+  - name: dbName
+    label: MariaDB database
+    default: vzu_dev
+  - name: dbUser
+    label: MariaDB user
+    default: vzu
+  - name: dbPassword
+    label: MariaDB password
+    type: password
+  - name: licenseKey
+    label: Cfx.re license key
+    type: password
+
+# ─────────────────────────────────────────────────────────────
+# Tasks — txAdmin runs these in order during deploy. The full
+# upstream task list is preserved in the inherited recipe at
+# txData/Qbox_F913B4.base/. When we do a fresh deploy we resync
+# this list against upstream and pin commits per resource.
+#
+# This file currently captures the SHAPE; the per-resource task
+# list will be ported over as part of the monorepo cutover (see
+# docs/runbooks/local-dev-server.md → Migration path).
+# ─────────────────────────────────────────────────────────────
+
+tasks:
+  # ─────────────────────────────────────────────────────────────────────
+  # This recipe intentionally captures the SHAPE of a fresh deploy
+  # rather than the full task list. The inherited dev box was built from
+  # the upstream Qbox recipe (commit F913B4), and we have not yet pinned
+  # commits per resource for our own redistribution.
+  #
+  # The full task list (~70 download_github / move_path / replace_string
+  # entries) gets ported here as part of the monorepo cutover, when each
+  # vendored resource lands under resources/[vendor]/<name>/ with its
+  # own VENDORED.md. See:
+  #   - docs/runbooks/local-dev-server.md   §Migration path
+  #   - docs/runbooks/circuit-hack-inventory.md  for the keep-fork-scrub list
+  # ─────────────────────────────────────────────────────────────────────
+
+  # 1. Pull qbox base + ox + standalone resources
+  # Per-resource `download_github` tasks go here, mirrored from the
+  # upstream Qbox recipe at the pinned commit. Until cutover, fresh
+  # deploys reuse the upstream Qbox recipe directly and we patch our
+  # [vector]/ resources in afterwards.
+
+  # 2. Drop our server.cfg into place (rendered from the template)
+  - action: write_file
+    file: ./server.cfg
+    data: |
+      # Rendered from server/server.cfg.template at deploy time.
+      # See repo: server/server.cfg.template
+
+  # 3. Database bootstrap (schemas owned by individual resources)
+  # oxmysql ships an install.sql that initialises framework tables.
+  - action: query_database
+    file: ./resources/[ox]/oxmysql/scripts/sql/install.sql
+
+  # 4. Vector-owned resources
+  # download_github task(s) for resources/[vector]/* land here once
+  # the public monorepo URL is stable. Until then, operators sync the
+  # [vector]/ folder out-of-band.
+
+# ─────────────────────────────────────────────────────────────────────
+# Notes for the operator:
+#
+# - Secrets never live in this file. All `${VAR}` references resolve
+#   from the .env loaded by docker-compose, NOT from txAdmin variables.
+#   txAdmin variables here are only for prompts when a human is
+#   driving the deployer UI.
+#
+# - The inherited recipe folder `Qbox_F913B4.base/` is the deployed
+#   artifact. Treat it as a build output — re-running the deployer
+#   regenerates it.
+#
+# - First-time admin: txAdmin asks for an admin master account on
+#   first boot. The account lives in `txData/admins.json` (bcrypt
+#   hashed) and is **never** committed.
+#
+# - vzu_circuit_hack_test_zone (smoke rig) MUST NOT be deployed by
+#   this recipe. It hands out free money and admin shortcuts and is
+#   dev-only. Lives under tools/dev-bench/ post-cutover.
+# ─────────────────────────────────────────────────────────────────────
