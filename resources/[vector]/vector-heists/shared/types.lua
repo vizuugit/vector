@@ -1,0 +1,74 @@
+-- vector-heists/shared/types.lua
+-- Doc-comment type annotations only. No runtime side-effects.
+-- Spec: VEC-23 resource-spec §3.1 (template), §5.2 (run row), §4 (events).
+
+---@alias HeistStatus
+---| "brief" | "prep" | "execute" | "escape" | "settle"
+---| "done"  | "aborted" | "forfeit" | "reconcile"
+
+---@class HeistTemplate
+---@field template_version integer
+---@field key string
+---@field public_name string
+---@field description string?
+---@field difficulty string?
+---@field crew_size_min integer
+---@field crew_size_max integer
+---@field cooldowns { global_seconds: integer, per_crew_seconds: integer }
+---@field bucket_strategy { mode: string, interior_phase: string, return_to_zero: string }
+---@field mlo_dependency { resource: string?, interior_id: string? }?
+---@field stages HeistStage[]
+---@field loot_table HeistLootEntry[]
+---@field payout { base_cents: integer, cap_cents: integer, split_policy: string }
+---@field reputation { base_points: integer, cap_points: integer }
+---@field modifiers table[]
+---@field observers table[]
+
+---@class HeistStage
+---@field name string
+---@field tick_budget_ms number?
+---@field duration_max_seconds integer
+---@field ai_spawns table[]?
+---@field objectives table[]?
+
+---@class HeistLootEntry
+---@field item string
+---@field weight integer
+---@field max_per_run integer
+
+---@class HeistRun
+---@field id integer
+---@field crew_id integer
+---@field template_key string
+---@field template_version integer
+---@field status HeistStatus
+---@field stage_idx integer
+---@field bucket_id integer?
+---@field payout_cents integer?
+---@field reputation_points integer?
+---@field abort_reason string?
+---@field started_at_ms integer
+---@field ended_at_ms integer?
+---@field settled_at_ms integer?
+---@field deadline_at_ms integer
+---@field members string[]      -- citizenids; locked at Brief→Execute
+---@field ready_set table<string, boolean>
+---@field payout_committed boolean? -- true once vector-crews:AwardPayout returned, before status=done
+---@field loot_picked table<integer, string>? -- net_id → item key, server-tracked
+
+---@class HeistJobBoardEntry
+---@field templateKey string
+---@field publicName string
+---@field difficulty string?
+---@field crewSizeMin integer
+---@field crewSizeMax integer
+---@field cooldownRemainingSeconds integer
+
+---@class HeistClientState
+---@field runId integer
+---@field templateKey string
+---@field state HeistStatus
+---@field stageIdx integer
+---@field deadlineAt integer
+---@field members string[]
+---@field bucketId integer?

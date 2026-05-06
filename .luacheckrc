@@ -21,6 +21,9 @@ globals = {
     "GetResourcePath",
     "GetResourceState",
     "GetInvokingResource",
+    "GetGameTimer",
+    "LoadResourceFile",
+    "SaveResourceFile",
     "exports",
     "source",
     "PerformHttpRequest",
@@ -28,10 +31,21 @@ globals = {
     "msgpack",
     "promise",
 
+    -- oxmysql (server-side; required by any resource with a DB schema)
+    "MySQL",
+
     -- qbox / framework conveniences (extend per-resource overrides if needed)
     "QBX",
     "lib",
     "cache",
+
+    -- fxmanifest.lua DSL keywords
+    "fx_version", "game", "lua54",
+    "name", "author", "description", "version", "repository",
+    "shared_script", "shared_scripts",
+    "server_script", "server_scripts",
+    "client_script", "client_scripts",
+    "files", "dependencies",
 }
 
 -- Per-resource overrides go in resources/<name>/.luacheckrc and inherit from
