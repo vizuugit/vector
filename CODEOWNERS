@@ -1,0 +1,20 @@
+# CODEOWNERS — Vector
+#
+# Everything is owned by the CTO until engineers join. As we hire, replace
+# `* @vizuugit` with team handles per directory. Keep this file the single
+# source of truth — do not duplicate ownership rules in PR templates.
+
+* @vizuugit
+
+# When the FiveM server engineer is hired, fan out:
+#   /server/      @vizuugit @<server-eng>
+#   /resources/   @<server-eng>
+#   /db/          @<server-eng>
+#
+# When the infra engineer is hired:
+#   /ops/         @<infra-eng>
+#   /server/server.cfg* @<infra-eng>
+#
+# Always keep CTO as a co-owner on /docs/adr/ — ADR sign-off does not
+# delegate.
+/docs/adr/      @vizuugit

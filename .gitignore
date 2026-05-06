@@ -1,0 +1,63 @@
+# --- OS / editor noise ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# --- Lua ---
+*.luac
+luac.out
+
+# --- Node / pnpm / npm (tools/, scripts/, anywhere we touch JS) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+dist/
+build/
+*.tsbuildinfo
+
+# --- Python (asset converters under tools/) ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# --- FiveM / CitizenFX server runtime artifacts ---
+# txData lives outside the repo on prod; locally it should never be committed.
+txData/
+server-data/
+cache/
+crashes/
+*.dmp
+
+# Generated server.cfg variants with secrets injected at deploy time.
+server/server.local.cfg
+server/server.prod.cfg
+server.cfg.local
+
+# --- Asset pipeline intermediates ---
+# Source DCC files belong elsewhere. Repo holds the converted FiveM-ready output.
+*.blend1
+*.zpac
+*.ydr.bak
+*.ytd.bak
+
+# --- Secrets ---
+*.pem
+*.key
+.secrets/
+secrets.local.*
+
+# --- Paperclip / agent runtime state (do not commit) ---
+.remember/
+.paperclip/
+.claude/
