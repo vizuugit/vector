@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="520" viewBox="0 0 640 520">
+  <defs>
+    <style>
+      .vec { fill: #2BCAD0; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 260px; font-weight: 800; letter-spacing: 8px; }
+    </style>
+  </defs>
+  <text class="vec" x="50" y="332">VEC</text>
+  <rect x="50" y="380" width="540" height="10" fill="#2BCAD0" opacity="0.95"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="280" viewBox="0 0 1600 280">
+  <defs>
+    <style>
+      .vec      { fill: #2BCAD0; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 130px; font-weight: 800; letter-spacing: 4px; }
+      .rp       { fill: #D2F8FF; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 130px; font-weight: 800; letter-spacing: 4px; }
+      .by       { fill: #8A98A2; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 38px; font-weight: 500; letter-spacing: 2px; }
+      .vzu      { fill: #2BCAD0; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 56px; font-weight: 800; letter-spacing: 6px; }
+      .studio   { fill: #D2F8FF; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 56px; font-weight: 600; letter-spacing: 4px; }
+    </style>
+  </defs>
+  <text class="vec" x="40" y="170">VECTOR</text>
+  <circle cx="660" cy="135" r="9" fill="#2BCAD0"/>
+  <text class="rp" x="694" y="170">RP</text>
+  <line x1="900" y1="80" x2="900" y2="200" stroke="#2BCAD0" stroke-width="2" opacity="0.6"/>
+  <text class="by" x="950" y="120">by</text>
+  <text class="vzu" x="1020" y="160">VZU</text>
+  <text class="studio" x="1232" y="160">STUDIO</text>
+</svg>
