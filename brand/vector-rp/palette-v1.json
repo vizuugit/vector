@@ -1,0 +1,11 @@
+{
+  "primary": "#0F1318",
+  "secondary": "#2BCAD0",
+  "accent": "#D2F8FF",
+  "tokens": {
+    "--rp-bg": "#0F1318",
+    "--rp-fg": "#E7EEF2",
+    "--rp-accent": "#2BCAD0"
+  },
+  "rationale": "Cold grounded palette (charcoal + deep cyan) with one neon-edge accent; avoids VZU magenta/purple while preserving high readability on dark footage."
+}
