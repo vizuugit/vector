@@ -12,7 +12,8 @@
   <circle cx="710" cy="155" r="9" fill="#2BCAD0"/>
   <text class="rp" x="740" y="200">RP</text>
   <rect x="80" y="240" width="850" height="6" fill="#2BCAD0" opacity="0.95"/>
+  <!-- "dark" variant = STUDIO pale-cyan, for dark substrates. STUDIO x tightened to land within ~15px of VZU's right edge. -->
   <text class="by" x="320" y="370">by</text>
   <text class="vzu" x="370" y="372">VZU</text>
-  <text class="studio" x="510" y="372">STUDIO</text>
+  <text class="studio" x="481" y="372">STUDIO</text>
 </svg>

@@ -8,11 +8,12 @@
       .studio   { fill: #D2F8FF; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 56px; font-weight: 600; letter-spacing: 4px; }
     </style>
   </defs>
+  <!-- "dark" variant = STUDIO in pale-cyan (#D2F8FF), for use on dark substrates (charcoal/night). VZU stays cyan. STUDIO x tightened to land within ~20px of VZU's right edge so the endorsement reads as one word. -->
   <text class="vec" x="40" y="170">VECTOR</text>
   <circle cx="660" cy="135" r="9" fill="#2BCAD0"/>
   <text class="rp" x="694" y="170">RP</text>
   <line x1="900" y1="80" x2="900" y2="200" stroke="#2BCAD0" stroke-width="2" opacity="0.6"/>
   <text class="by" x="950" y="120">by</text>
   <text class="vzu" x="1020" y="160">VZU</text>
-  <text class="studio" x="1232" y="160">STUDIO</text>
+  <text class="studio" x="1162" y="160">STUDIO</text>
 </svg>
