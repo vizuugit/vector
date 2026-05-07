@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <style>
+      .vec     { fill: #2BCAD0; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 140px; font-weight: 800; letter-spacing: 5px; }
+      .rp      { fill: #D2F8FF; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 140px; font-weight: 800; letter-spacing: 5px; }
+      .tag     { fill: #8A98A2; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 26px; font-weight: 500; letter-spacing: 6px; }
+      .by      { fill: #8A98A2; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 22px; font-weight: 500; letter-spacing: 3px; }
+      .vzu     { fill: #2BCAD0; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 32px; font-weight: 800; letter-spacing: 5px; }
+      .studio  { fill: #D2F8FF; font-family: 'Ubuntu Sans','Ubuntu','DejaVu Sans',sans-serif; font-size: 32px; font-weight: 600; letter-spacing: 3px; }
+    </style>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A1F26"/>
+      <stop offset="100%" stop-color="#0F1318"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect x="60" y="60" width="1080" height="3" fill="#2BCAD0" opacity="0.4"/>
+  <rect x="60" y="567" width="1080" height="3" fill="#2BCAD0" opacity="0.4"/>
+  <text class="tag" x="600" y="180" text-anchor="middle">REAL DEVS · REAL RP · NO COSPLAY</text>
+  <text class="vec" x="200" y="370">VECTOR</text>
+  <circle cx="900" cy="320" r="10" fill="#2BCAD0"/>
+  <text class="rp" x="940" y="370">RP</text>
+  <rect x="200" y="400" width="900" height="6" fill="#2BCAD0" opacity="0.95"/>
+  <text class="by" x="510" y="500">by</text>
+  <text class="vzu" x="550" y="503">VZU</text>
+  <text class="studio" x="664" y="503">STUDIO</text>
+</svg>

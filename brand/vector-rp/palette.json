@@ -1,0 +1,19 @@
+{
+  "name": "Vector RP — final palette",
+  "version": "tier2",
+  "primary": "#0F1318",
+  "fg": "#D2F8FF",
+  "accent": "#2BCAD0",
+  "accent-warm": "#E89542",
+  "tokens": {
+    "--rp-bg": "#0F1318",
+    "--rp-bg-tint": "#1A1F26",
+    "--rp-fg": "#D2F8FF",
+    "--rp-fg-muted": "#8A98A2",
+    "--rp-accent": "#2BCAD0",
+    "--rp-accent-warm": "#E89542",
+    "--rp-error": "#C04545",
+    "--rp-success": "#3FA37A"
+  },
+  "rationale": "Cold-scale charcoal + cyan baseline (--rp-accent) for HUD chrome and brand primitives; sodium-amber (--rp-accent-warm) for heist/violence beats and street-light frames. Duotone discipline lands on the GTA V / True Detective / Sicario reference set; cyan-only would land Mr. Robot, which is the wrong adjacent. Magenta/purple is reserved for VZU publisher canon and never appears in product chrome. --rp-bg-tint is the raised-surface step for layered HUD panels; --rp-fg-muted sits in the same hue family as --rp-fg, desaturated for secondary text; --rp-error and --rp-success stay grounded (deep blood-red, muted teal-green) instead of bright UI semantics."
+}
